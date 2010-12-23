@@ -20,6 +20,10 @@ module Puret
       def puret(*attributes)
         make_it_puret! unless included_modules.include?(InstanceMethods)
 
+        define_method "puretized_attributes" do
+          attributes
+        end
+
         attributes.each do |attribute|
           # attribute setter
           define_method "#{attribute}=" do |value|

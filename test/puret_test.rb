@@ -14,7 +14,7 @@ class PuretTest < ActiveSupport::TestCase
   test "database setup" do
     assert_equal 1, Post.count
   end
- 
+
   test "allow translation" do
     I18n.locale = :de
     Post.first.update_attribute :title, 'Deutscher Titel'
@@ -22,7 +22,7 @@ class PuretTest < ActiveSupport::TestCase
     I18n.locale = :en
     assert_equal 'English title', Post.first.title
   end
- 
+
   test "assert fallback to default locale" do
     post = Post.first
     I18n.locale = :sv
@@ -32,7 +32,7 @@ class PuretTest < ActiveSupport::TestCase
     I18n.locale = :de
     assert_equal 'English title', post.title
   end
- 
+
   test "assert fallback to saved default locale defined on instance" do
     post = Post.first
     def post.default_locale() :sv; end
@@ -45,7 +45,7 @@ class PuretTest < ActiveSupport::TestCase
     I18n.locale = :de
     assert_equal 'Svensk titel', post.title
   end
- 
+
   test "assert fallback to saved default locale defined on class level" do
     post = Post.first
     def Post.default_locale() :sv; end
@@ -58,24 +58,24 @@ class PuretTest < ActiveSupport::TestCase
     I18n.locale = :de
     assert_equal 'Svensk titel', post.title
   end
- 
+
   test "post has_many translations" do
     assert_equal PostTranslation, Post.first.translations.first.class
   end
- 
+
   test "translations are deleted when parent is destroyed" do
     I18n.locale = :de
     Post.first.update_attribute :title, 'Deutscher Titel'
     assert_equal 2, PostTranslation.count
-    
+
     Post.destroy_all
     assert_equal 0, PostTranslation.count
   end
-  
+
   test 'validates_presence_of should work' do
     post = Post.new
     assert_equal false, post.valid?
-    
+
     post.title = 'English title'
     assert_equal true, post.valid?
   end
@@ -117,5 +117,10 @@ class PuretTest < ActiveSupport::TestCase
     t1.save!
     t2 = PostTranslation.new :post => post, :locale => "de"
     assert_not_nil t2.errors[:locale]
+  end
+
+  test 'puretized_attributes should contain :title' do
+    post = Post.first
+    assert_equal true, post.puretized_attributes.include?(:title)
   end
 end
