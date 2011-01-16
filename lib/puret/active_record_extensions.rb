@@ -43,8 +43,13 @@ module Puret
             translation = translations.detect { |t| t.locale.to_sym == I18n.locale } ||
               translations.detect { |t| t.locale.to_sym == puret_default_locale } ||
               translations.first
+            return translation[attribute] if translation && translation[attribute]
 
-            translation ? translation[attribute] : nil
+            if respond_to?("#{attribute}_puret_fallback")
+              return eval("#{attribute}_puret_fallback")
+            end
+
+            nil
           end
         end
       end
