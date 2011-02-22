@@ -51,6 +51,17 @@ module Puret
 
             nil
           end
+
+          # attribute getter without fallback
+          define_method "#{attribute}!" do
+            # return previously setted attributes if present
+            return puret_attributes[I18n.locale][attribute] if puret_attributes[I18n.locale][attribute]
+            return if new_record?
+
+            translation = translations.find_by_locale(I18n.locale.to_s)
+            return nil if translation.nil?
+            translation[attribute]
+          end
         end
       end
 
