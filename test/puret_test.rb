@@ -123,4 +123,38 @@ class PuretTest < ActiveSupport::TestCase
     post = Post.first
     assert_equal true, post.puretized_attributes.include?(:title)
   end
+
+  test 'while in I18n.default_locale, translation must have the attribute' do
+    post = Post.first
+    I18n.locale = :es
+    post.text = "Spanish text"
+    post.save!
+    post.reload
+    I18n.locale = :en
+    assert_equal "Spanish text", post.text
+  end
+
+  test 'while in model.puret_default_locale, translation must have the attribute' do
+    post = Post.first
+    def Post.default_locale() :sv; end
+    I18n.locale = :sv
+    post.text = "Swedish text"
+    post.save!
+    post.reload
+    assert_equal "English title", post.title
+  end
+
+  test 'while in no default locales, translation must have the attribute' do
+    post = Post.first
+    def Post.default_locale() :sv; end
+    I18n.locale = :sv
+    post.title = "Swedish title"
+    post.save!
+    I18n.locale = :ca
+    post.text = "Catalan text"
+    post.save!
+    I18n.locale = :klingon
+    post.reload
+    assert_equal "Catalan text", post.text
+  end
 end
