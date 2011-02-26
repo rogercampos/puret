@@ -49,7 +49,7 @@ module Puret
               return eval("#{attribute}_puret_fallback")
             end
 
-            nil
+            self[attribute]
           end
 
           # attribute getter without fallback
