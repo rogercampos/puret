@@ -58,9 +58,8 @@ module Puret
             return puret_attributes[I18n.locale][attribute] if puret_attributes[I18n.locale][attribute]
             return if new_record?
 
-            translation = translations.find_by_locale(I18n.locale.to_s)
-            return nil if translation.nil?
-            translation[attribute]
+            translation = translations.detect { |t| t.locale.to_sym == I18n.locale && t[attribute] }
+            translation && translation[attribute]
           end
         end
       end
